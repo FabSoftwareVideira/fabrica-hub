@@ -1,59 +1,79 @@
-<% const usuario = locals.user || null; %>
-<% const caminho = locals.currentPath || ''; %>
-<a href="#conteudo" class="skip-link">Ir para o conteúdo</a>
+<% const usuario=locals.user || null; %>
+    <% const caminho=locals.currentPath || '' ; %>
+        <a href="#conteudo" class="skip-link">Ir para o conteúdo</a>
 
-<div class="utility-bar">
-    <div class="utility-inner">
-        <ul class="utility-links" aria-label="Acesso rápido">
-            <li><a href="https://videira.ifc.edu.br/" target="_blank" rel="noopener noreferrer">Portal do Campus</a></li>
-            <li><a href="https://sig.ifc.edu.br" target="_blank" rel="noopener noreferrer">SIGAA</a></li>
-            <li><a href="https://fabrica.videira.ifc.edu.br" target="_blank" rel="noopener noreferrer">Fábrica de Software</a></li>
-        </ul>
-        <div class="utility-actions">
-            <button type="button" class="contrast-toggle" data-contraste aria-pressed="false">
-                <%- icone('contraste') %> Alto contraste
-            </button>
-            <% if (!usuario) { %>
-                <a href="/login" class="utility-admin"><%- icone('cadeado') %> Área administrativa</a>
-            <% } %>
-        </div>
-    </div>
-</div>
-
-<header class="site-header">
-    <div class="header-inner">
-        <a href="/" class="brand">
-            <img src="/img/logo-ifc-videira.png" alt="Instituto Federal Catarinense, Campus Videira" class="brand-logo" width="110" height="44">
-            <span class="brand-text">Hub de Aplicações<small>Fábrica de Software · IFC Campus Videira</small></span>
-        </a>
-
-        <% if (usuario) { %>
-            <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-principal">
-                <%- icone('menu') %> <span class="nav-toggle-text">Menu</span>
-            </button>
-
-            <nav class="main-nav" id="menu-principal" aria-label="Navegação principal">
-                <% const ativo = (condicao) => (condicao ? 'active' : ''); %>
-                <div class="nav-links">
-                    <a href="/" class="nav-link <%= ativo(caminho === '/') %>"><%- icone('home') %> Início</a>
-                    <a href="/admin/aplicacoes" class="nav-link <%= ativo(caminho.startsWith('/admin/aplicacoes')) %>"><%- icone('grade') %> Aplicações</a>
-                    <a href="/admin/categorias" class="nav-link <%= ativo(caminho.startsWith('/admin/categorias')) %>"><%- icone('pasta') %> Categorias</a>
-                    <a href="/admin/usuarios" class="nav-link <%= ativo(caminho.startsWith('/admin/usuarios')) %>"><%- icone('usuarios') %> Usuários</a>
-                </div>
-
-                <div class="nav-user" data-user-menu>
-                    <button type="button" class="nav-user-profile nav-user-toggle" aria-expanded="false" aria-controls="menu-usuario" aria-haspopup="true" title="Menu da conta">
-                        <span class="nav-avatar" aria-hidden="true"><%= usuario.nome.charAt(0).toUpperCase() %></span>
-                        <span class="nav-user-name"><%= usuario.nome %></span>
-                        <span class="nav-user-caret" aria-hidden="true"><%- icone('baixo') %></span>
+        <div class="utility-bar">
+            <div class="utility-inner">
+                <ul class="utility-links" aria-label="Acesso rápido">
+                    <li><a href="https://videira.ifc.edu.br/" target="_blank" rel="noopener noreferrer">Portal do
+                            Campus</a></li>
+                    <li><a href="https://sig.ifc.edu.br" target="_blank" rel="noopener noreferrer">SIGAA</a></li>
+                    <li><a href="https://fabrica.labia.ifc.edu.br" target="_blank" rel="noopener noreferrer">Fábrica de
+                            Software</a></li>
+                </ul>
+                <div class="utility-actions">
+                    <button type="button" class="contrast-toggle" data-contraste aria-pressed="false">
+                        <%- icone('contraste') %> Alto contraste
                     </button>
-                    <div class="nav-user-dropdown" id="menu-usuario" hidden>
-                        <p class="nav-user-email"><%= usuario.email %></p>
-                        <div class="nav-user-separador" role="separator"></div>
-                        <a href="/logout" class="nav-user-item nav-user-item-danger"><%- icone('sair') %> Sair</a>
-                    </div>
+                    <% if (!usuario) { %>
+                        <a href="/login" class="utility-admin"><%- icone('cadeado') %> Área administrativa</a>
+                        <% } %>
                 </div>
-            </nav>
-        <% } %>
-    </div>
-</header>
+            </div>
+        </div>
+
+        <header class="site-header">
+            <div class="header-inner">
+                <a href="/" class="brand">
+                    <img src="/img/logo-ifc-videira.png" alt="Instituto Federal Catarinense, Campus Videira"
+                        class="brand-logo" width="110" height="44">
+                    <span class="brand-text">Hub de Aplicações<small>Fábrica de Software · IFC Campus
+                            Videira</small></span>
+                </a>
+
+                <% if (usuario) { %>
+                    <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false"
+                        aria-controls="menu-principal">
+                        <%- icone('menu') %> <span class="nav-toggle-text">Menu</span>
+                    </button>
+
+                    <nav class="main-nav" id="menu-principal" aria-label="Navegação principal">
+                        <% const ativo=(condicao)=> (condicao ? 'active' : ''); %>
+                            <div class="nav-links">
+                                <a href="/" class="nav-link <%= ativo(caminho === '/') %>"><%- icone('home') %>
+                                        Início</a>
+                                <a href="/admin/aplicacoes"
+                                    class="nav-link <%= ativo(caminho.startsWith('/admin/aplicacoes')) %>"><%-
+                                        icone('grade') %> Aplicações</a>
+                                <a href="/admin/categorias"
+                                    class="nav-link <%= ativo(caminho.startsWith('/admin/categorias')) %>"><%-
+                                        icone('pasta') %> Categorias</a>
+                                <a href="/admin/usuarios"
+                                    class="nav-link <%= ativo(caminho.startsWith('/admin/usuarios')) %>"><%-
+                                        icone('usuarios') %> Usuários</a>
+                            </div>
+
+                            <div class="nav-user" data-user-menu>
+                                <button type="button" class="nav-user-profile nav-user-toggle" aria-expanded="false"
+                                    aria-controls="menu-usuario" aria-haspopup="true" title="Menu da conta">
+                                    <span class="nav-avatar" aria-hidden="true">
+                                        <%= usuario.nome.charAt(0).toUpperCase() %>
+                                    </span>
+                                    <span class="nav-user-name">
+                                        <%= usuario.nome %>
+                                    </span>
+                                    <span class="nav-user-caret" aria-hidden="true"><%- icone('baixo') %></span>
+                                </button>
+                                <div class="nav-user-dropdown" id="menu-usuario" hidden>
+                                    <p class="nav-user-email">
+                                        <%= usuario.email %>
+                                    </p>
+                                    <div class="nav-user-separador" role="separator"></div>
+                                    <a href="/logout" class="nav-user-item nav-user-item-danger"><%- icone('sair') %>
+                                            Sair</a>
+                                </div>
+                            </div>
+                    </nav>
+                    <% } %>
+            </div>
+        </header>

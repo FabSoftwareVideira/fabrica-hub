@@ -294,11 +294,23 @@ test('excluir: o que ainda está no Dokploy só pode ser ocultado', async () => 
     }
 });
 
-test('login de desenvolvimento só existe com APP_ENV=development', async () => {
+test('login de desenvolvimento só existe fora de produção e com APP_ENV=development', async () => {
     for (const ambiente of ['production', 'staging', '']) {
         process.env.APP_ENV = ambiente;
         assert.equal((await pagina('/auth/dev/admin')).status, 404, ambiente || '(vazio)');
         assert.doesNotMatch(await (await pagina('/login')).text(), /auth\/dev/);
+    }
+    assert.equal(await usuarios.buscarPorEmail('admin.dev@ifc.edu.br'), null);
+
+    const nodeEnvOriginal = process.env.NODE_ENV;
+    process.env.APP_ENV = 'development';
+    process.env.NODE_ENV = 'production';
+    try {
+        assert.equal((await pagina('/auth/dev/admin')).status, 404, 'NODE_ENV=production');
+        assert.doesNotMatch(await (await pagina('/login')).text(), /auth\/dev/);
+    } finally {
+        if (nodeEnvOriginal === undefined) delete process.env.NODE_ENV;
+        else process.env.NODE_ENV = nodeEnvOriginal;
     }
     assert.equal(await usuarios.buscarPorEmail('admin.dev@ifc.edu.br'), null);
 

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const crypto = require('crypto');
 const { setFlash, iniciarSessao } = require('../middleware/auth');
 const { autorizarLogin } = require('../services/acesso');
+const { acessoDesenvolvimentoAtivo } = require('../config/ambiente');
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -9,7 +10,7 @@ const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
 
 router.get('/login', (req, res) => {
     if (req.session.user) return res.redirect('/admin/aplicacoes');
-    res.render('login', { devLogin: process.env.APP_ENV === 'development' });
+    res.render('login', { devLogin: acessoDesenvolvimentoAtivo() });
 });
 
 router.get('/auth/google', (req, res) => {

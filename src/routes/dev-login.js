@@ -2,11 +2,12 @@ const router = require('express').Router();
 const usuarios = require('../models/usuarios');
 const { iniciarSessao } = require('../middleware/auth');
 const { DOMINIO_INSTITUCIONAL } = require('../config/constants');
+const { acessoDesenvolvimentoAtivo } = require('../config/ambiente');
 
-// Só funciona com APP_ENV=development declarado. Em qualquer outro ambiente,
-// inclusive com a variável ausente, a rota responde 404 e NÃO autentica ninguém.
+// Em produção ou quando o ambiente não é explicitamente de desenvolvimento,
+// a rota responde 404 e não autentica ninguém.
 function apenasDev(req, res, next) {
-    if (process.env.APP_ENV !== 'development') {
+    if (!acessoDesenvolvimentoAtivo()) {
         return res.status(404).send('Not Found');
     }
     next();

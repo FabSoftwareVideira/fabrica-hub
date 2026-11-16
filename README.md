@@ -41,7 +41,7 @@ docker compose up -d --build
 
 Abra [http://localhost:3010](http://localhost:3010) (a porta 3000 fica livre para os outros projetos da Fábrica). As migrações rodam sozinhas ao subir.
 
-Em desenvolvimento (`APP_ENV=development`), a tela **Área administrativa** tem um **Acesso de desenvolvimento** que entra como administrador de teste sem passar pelo Google. Essa rota responde 404 em qualquer outro ambiente.
+Em desenvolvimento (`APP_ENV=development` e `NODE_ENV` diferente de `production`), a tela **Área administrativa** tem um **Acesso de desenvolvimento** que entra como administrador de teste sem passar pelo Google. Em produção, esse acesso fica desativado mesmo se `APP_ENV` estiver configurado incorretamente como `development`; a rota responde 404.
 
 ## Login com Google
 

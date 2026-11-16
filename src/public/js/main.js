@@ -168,6 +168,7 @@ function iniciarStatusAoVivo() {
         if (numero('offline')) numero('offline').textContent = offline;
         if (fora) fora.classList.toggle('tem-fora', offline > 0);
         if (hora && dados.verificadoEm) {
+            hora.parentElement.hidden = false;
             hora.textContent = ` às ${new Date(dados.verificadoEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}`;
         }
     };

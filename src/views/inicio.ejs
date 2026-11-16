@@ -8,29 +8,29 @@
 <body>
     <%- include('partials/header') %>
 
-    <main id="conteudo" class="public-home">
+    <main id="conteudo">
         <div class="public-container">
             <%- include('partials/flash') %>
 
-            <section class="hub-hero" aria-labelledby="titulo-inicio">
+            <section class="hub-topo" aria-labelledby="titulo-inicio">
                 <div>
-                    <span class="public-eyebrow">Fábrica de Software · IFC Campus Videira</span>
-                    <h1 id="titulo-inicio">As aplicações do campus em um só lugar.</h1>
-                    <p class="public-lead">Encontre os sistemas e projetos disponíveis, veja se estão no ar e acesse com um clique.</p>
+                    <h1 id="titulo-inicio">Aplicações do campus</h1>
+                    <% if (resumo.total) { %>
+                    <p class="hub-situacao">
+                        <span><strong data-resumo="total"><%= resumo.total %></strong> <%= resumo.total === 1 ? 'aplicação' : 'aplicações' %></span>
+                        <span class="hub-situacao-ok"><strong data-resumo="online"><%= resumo.online %></strong> no ar</span>
+                        <span class="hub-situacao-fora <%= resumo.offline ? 'tem-fora' : '' %>" data-resumo-fora><strong data-resumo="offline"><%= resumo.offline %></strong> fora do ar</span>
+                        <span <%= resumo.verificadoEm ? '' : 'hidden' %>>verificado<span data-resumo-hora><%= resumo.verificadoEm ? ` às ${horaBr(resumo.verificadoEm)}` : '' %></span></span>
+                    </p>
+                    <% } %>
                 </div>
 
                 <% if (resumo.total) { %>
-                <section class="hub-resumo" aria-labelledby="titulo-resumo">
-                    <span class="public-login-label" id="titulo-resumo">Situação agora</span>
-                    <div class="hub-resumo-numeros">
-                        <p class="hub-numero"><strong data-resumo="total"><%= resumo.total %></strong><span><%= resumo.total === 1 ? 'aplicação' : 'aplicações' %></span></p>
-                        <p class="hub-numero hub-numero-ok"><strong data-resumo="online"><%= resumo.online %></strong><span>no ar</span></p>
-                        <p class="hub-numero hub-numero-fora <%= resumo.offline ? 'tem-fora' : '' %>" data-resumo-fora><strong data-resumo="offline"><%= resumo.offline %></strong><span>fora do ar</span></p>
-                    </div>
-                    <p class="hub-resumo-nota" aria-live="polite">
-                        Status verificado automaticamente<span data-resumo-hora><%= resumo.verificadoEm ? ` às ${horaBr(resumo.verificadoEm)}` : '' %></span>.
-                    </p>
-                </section>
+                <div class="hub-busca">
+                    <label for="busca" class="sr-only">Buscar aplicação</label>
+                    <%- icone('lupa') %>
+                    <input type="search" id="busca" data-busca placeholder="Buscar aplicação" autocomplete="off">
+                </div>
                 <% } %>
             </section>
 
@@ -41,22 +41,15 @@
                     <% if (user) { %><br><a href="/admin/aplicacoes" class="btn">Cadastrar aplicações</a><% } %>
                 </div>
             <% } else { %>
-                <div class="hub-ferramentas">
-                    <div class="hub-busca">
-                        <label for="busca" class="sr-only">Buscar aplicação</label>
-                        <%- icone('lupa') %>
-                        <input type="search" id="busca" data-busca placeholder="Buscar aplicação" autocomplete="off">
-                    </div>
-                    <% if (grupos.length > 1) { %>
-                    <nav aria-label="Categorias">
-                        <ul class="hub-atalhos">
-                            <% grupos.forEach((grupo) => { %>
-                                <li><a href="#<%= grupo.ancora %>" class="hub-atalho"><%= grupo.nome %> <b><%= grupo.aplicacoes.length %></b></a></li>
-                            <% }) %>
-                        </ul>
-                    </nav>
-                    <% } %>
-                </div>
+                <% if (grupos.length > 1) { %>
+                <nav aria-label="Categorias">
+                    <ul class="hub-atalhos">
+                        <% grupos.forEach((grupo) => { %>
+                            <li><a href="#<%= grupo.ancora %>" class="hub-atalho"><%= grupo.nome %> <b><%= grupo.aplicacoes.length %></b></a></li>
+                        <% }) %>
+                    </ul>
+                </nav>
+                <% } %>
 
                 <p class="hub-vazio" data-busca-vazio hidden><strong>Nenhuma aplicação encontrada.</strong> Tente outro nome.</p>
 

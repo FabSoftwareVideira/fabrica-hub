@@ -1,0 +1,52 @@
+name: fabrica-hub-dev
+
+services:
+  hub-db:
+    container_name: fabrica-hub-dev-db
+    image: postgres:16-alpine
+    env_file: .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - fabrica-hub-dev-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:15433:5432"
+    networks:
+      - fabrica-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  hub-web:
+    container_name: fabrica-hub-dev-web
+    build:
+      context: .
+      target: dev
+    ports:
+      # 3010 no computador: a 3000 costuma estar com outro projeto da Fábrica
+      - "3010:3000"
+    depends_on:
+      hub-db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      APP_ENV: development
+      APP_VERSION: dev
+      POSTGRES_HOST: hub-db
+    volumes:
+      # hot reload — monta o código local no container
+      - .:/app
+      - /app/node_modules
+    networks:
+      - fabrica-network
+    restart: unless-stopped
+
+volumes:
+  fabrica-hub-dev-data:
+
+networks:
+  fabrica-network:
+    driver: bridge

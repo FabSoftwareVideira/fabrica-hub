@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<% const titulo = app ? 'Editar aplicação' : 'Nova aplicação'; %>
+
+<head>
+    <%- include('partials/head', { titulo }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="container container-estreito">
+        <%- include('partials/breadcrumb', { itens: [
+            { texto: 'Início', href: '/' },
+            { texto: 'Aplicações', href: '/admin/aplicacoes' },
+            { texto: titulo }
+        ] }) %>
+        <%- include('partials/flash') %>
+
+        <div class="page-head">
+            <div>
+                <h1><%= titulo %></h1>
+                <% if (app && app.origem === 'dokploy') { %>
+                    <p>Encontrada no Dokploy<%= app.dokploy_projeto ? ` (projeto ${app.dokploy_projeto})` : '' %>. Se o domínio mudar lá, o endereço é atualizado aqui.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <form method="post" action="<%= app ? `/admin/aplicacoes/${app.id}` : '/admin/aplicacoes' %>" class="card">
+            <div class="form-secao">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" name="nome" value="<%= dados.nome %>" maxlength="100" required autocomplete="off">
+                    </div>
+                    <div class="form-field">
+                        <label for="url">Endereço</label>
+                        <input type="url" id="url" name="url" value="<%= dados.url %>" maxlength="500" required placeholder="https://exemplo.videira.ifc.edu.br" autocomplete="off">
+                        <small>É por ele que o hub abre a aplicação e confere se ela está no ar.</small>
+                    </div>
+                    <div class="form-field form-largo">
+                        <label for="descricao">Descrição <span class="text-muted">(opcional)</span></label>
+                        <textarea id="descricao" name="descricao" maxlength="300" rows="3"><%= dados.descricao %></textarea>
+                        <small>Uma ou duas frases dizendo para que serve e para quem é.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-secao">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="categoria_id">Categoria</label>
+                        <select id="categoria_id" name="categoria_id">
+                            <option value="">Sem categoria</option>
+                            <% categorias.forEach((categoria) => { %>
+                                <option value="<%= categoria.id %>" <%= dados.categoriaId === categoria.id ? 'selected' : '' %>><%= categoria.nome %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="icone">Ícone <span class="text-muted">(opcional)</span></label>
+                        <input type="text" id="icone" name="icone" value="<%= dados.icone %>" maxlength="16" placeholder="🎓" autocomplete="off">
+                        <small>Um emoji. Sem ele, o cartão mostra a inicial do nome.</small>
+                    </div>
+                    <div class="form-field">
+                        <label for="ordem">Ordem</label>
+                        <input type="number" id="ordem" name="ordem" value="<%= dados.ordem %>" min="0" max="9999" step="1">
+                        <small>Números menores aparecem primeiro na categoria.</small>
+                    </div>
+                </div>
+
+                <label class="check-line">
+                    <input type="checkbox" name="publicada" <%= dados.situacao === 'publicada' ? 'checked' : '' %>>
+                    <span>Publicada na página inicial<small>Desmarque para guardar o cadastro sem mostrá-lo aos visitantes.</small></span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit"><%- icone('check') %> <%= app ? 'Salvar alterações' : 'Cadastrar aplicação' %></button>
+                <a href="/admin/aplicacoes" class="btn btn-ghost">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

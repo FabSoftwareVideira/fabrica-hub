@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <%- include('partials/head', { titulo: 'Categorias' }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="container">
+        <%- include('partials/breadcrumb', { itens: [{ texto: 'Início', href: '/' }, { texto: 'Categorias' }] }) %>
+        <%- include('partials/flash') %>
+
+        <div class="page-head">
+            <div>
+                <h1>Categorias</h1>
+                <p>Os grupos em que as aplicações aparecem na página inicial.</p>
+            </div>
+        </div>
+
+        <section class="card" aria-labelledby="titulo-form">
+            <h2 id="titulo-form"><%= editando ? `Editar "${editando.nome}"` : 'Nova categoria' %></h2>
+            <form method="post" action="<%= editando ? `/admin/categorias/${editando.id}` : '/admin/categorias' %>" class="form-linha">
+                <div class="form-field">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" name="nome" value="<%= editando ? editando.nome : '' %>" maxlength="80" required autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="descricao">Descrição <span class="text-muted">(opcional)</span></label>
+                    <input type="text" id="descricao" name="descricao" value="<%= editando ? (editando.descricao || '') : '' %>" maxlength="255" autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="ordem">Ordem</label>
+                    <input type="number" id="ordem" name="ordem" value="<%= editando ? editando.ordem : (lista.length ? Math.min(9999, Math.max(...lista.map((c) => c.ordem)) + 10) : 10) %>" min="0" max="9999" step="1">
+                </div>
+                <div class="form-actions">
+                    <button type="submit"><%- icone(editando ? 'check' : 'mais') %> <%= editando ? 'Salvar' : 'Adicionar' %></button>
+                    <% if (editando) { %><a href="/admin/categorias" class="btn btn-ghost">Cancelar</a><% } %>
+                </div>
+            </form>
+        </section>
+
+        <section class="card" aria-labelledby="titulo-lista">
+            <h2 id="titulo-lista" class="sr-only">Categorias cadastradas</h2>
+            <% if (!lista.length) { %>
+                <p class="empty-state">Nenhuma categoria ainda. Sem categorias, as aplicações aparecem em um único grupo.</p>
+            <% } else { %>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Ordem</th>
+                            <th scope="col">Aplicações</th>
+                            <th scope="col" class="col-acoes"><span class="sr-only">Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% lista.forEach((categoria) => { %>
+                        <tr>
+                            <td class="celula-principal">
+                                <div class="user-cell">
+                                    <strong><%= categoria.nome %></strong>
+                                    <% if (categoria.descricao) { %><span><%= categoria.descricao %></span><% } %>
+                                </div>
+                            </td>
+                            <td><%= categoria.ordem %></td>
+                            <td><%= categoria.total_aplicacoes %></td>
+                            <td>
+                                <div class="user-actions">
+                                    <a href="/admin/categorias?editar=<%= categoria.id %>" class="user-action" title="Editar" aria-label="Editar <%= categoria.nome %>"><%- icone('caneta') %></a>
+                                    <form method="post" action="/admin/categorias/<%= categoria.id %>/excluir">
+                                        <button type="submit" class="user-action user-action-danger" title="Excluir" aria-label="Excluir <%= categoria.nome %>"
+                                            data-confirmar="Excluir a categoria &quot;<%= categoria.nome %>&quot;?<%= categoria.total_aplicacoes ? ` As ${categoria.total_aplicacoes} aplicações dela ficam sem categoria.` : '' %>"><%- icone('lixeira') %></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <%- include('partials/head', { titulo: 'Página não encontrada' }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="container">
+        <%- include('partials/breadcrumb', { itens: [{ texto: 'Início', href: '/' }, { texto: 'Página não encontrada' }] }) %>
+        <div class="login-box text-center">
+            <h1>Página não encontrada</h1>
+            <p>O endereço que você tentou abrir não existe ou foi movido.</p>
+            <a href="/" class="btn">Ver as aplicações</a>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

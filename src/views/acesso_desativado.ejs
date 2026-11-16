@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <%- include('partials/head', { titulo: 'Acesso desativado' }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="container">
+        <%- include('partials/breadcrumb', { itens: [{ texto: 'Início', href: '/' }, { texto: 'Acesso desativado' }] }) %>
+        <div class="login-box">
+            <h1>Acesso desativado</h1>
+            <p>Esta conta não tem mais acesso à área administrativa. Procure a Fábrica de Software se acredita que isso ocorreu por engano.</p>
+            <a href="/" class="btn btn-secondary">Ver as aplicações</a>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

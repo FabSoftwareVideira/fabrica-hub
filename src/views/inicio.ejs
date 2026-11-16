@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <%- include('partials/head', { titulo: '' }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="public-home">
+        <div class="public-container">
+            <%- include('partials/flash') %>
+
+            <section class="hub-hero" aria-labelledby="titulo-inicio">
+                <div>
+                    <span class="public-eyebrow">Fábrica de Software · IFC Campus Videira</span>
+                    <h1 id="titulo-inicio">As aplicações do campus em um só lugar.</h1>
+                    <p class="public-lead">Encontre os sistemas e projetos disponíveis, veja se estão no ar e acesse com um clique.</p>
+                </div>
+
+                <% if (resumo.total) { %>
+                <section class="hub-resumo" aria-labelledby="titulo-resumo">
+                    <span class="public-login-label" id="titulo-resumo">Situação agora</span>
+                    <div class="hub-resumo-numeros">
+                        <p class="hub-numero"><strong data-resumo="total"><%= resumo.total %></strong><span><%= resumo.total === 1 ? 'aplicação' : 'aplicações' %></span></p>
+                        <p class="hub-numero hub-numero-ok"><strong data-resumo="online"><%= resumo.online %></strong><span>no ar</span></p>
+                        <p class="hub-numero hub-numero-fora <%= resumo.offline ? 'tem-fora' : '' %>" data-resumo-fora><strong data-resumo="offline"><%= resumo.offline %></strong><span>fora do ar</span></p>
+                    </div>
+                    <p class="hub-resumo-nota" aria-live="polite">
+                        Status verificado automaticamente<span data-resumo-hora><%= resumo.verificadoEm ? ` às ${horaBr(resumo.verificadoEm)}` : '' %></span>.
+                    </p>
+                </section>
+                <% } %>
+            </section>
+
+            <% if (!resumo.total) { %>
+                <div class="hub-vazio">
+                    <strong>Nenhuma aplicação publicada ainda.</strong>
+                    Assim que as aplicações forem cadastradas, elas aparecem aqui.
+                    <% if (user) { %><br><a href="/admin/aplicacoes" class="btn">Cadastrar aplicações</a><% } %>
+                </div>
+            <% } else { %>
+                <div class="hub-ferramentas">
+                    <div class="hub-busca">
+                        <label for="busca" class="sr-only">Buscar aplicação</label>
+                        <%- icone('lupa') %>
+                        <input type="search" id="busca" data-busca placeholder="Buscar aplicação" autocomplete="off">
+                    </div>
+                    <% if (grupos.length > 1) { %>
+                    <nav aria-label="Categorias">
+                        <ul class="hub-atalhos">
+                            <% grupos.forEach((grupo) => { %>
+                                <li><a href="#<%= grupo.ancora %>" class="hub-atalho"><%= grupo.nome %> <b><%= grupo.aplicacoes.length %></b></a></li>
+                            <% }) %>
+                        </ul>
+                    </nav>
+                    <% } %>
+                </div>
+
+                <p class="hub-vazio" data-busca-vazio hidden><strong>Nenhuma aplicação encontrada.</strong> Tente outro nome.</p>
+
+                <% grupos.forEach((grupo) => { %>
+                <section class="hub-grupo" id="<%= grupo.ancora %>" data-grupo aria-labelledby="titulo-<%= grupo.ancora %>">
+                    <div class="hub-grupo-cabecalho">
+                        <h2 id="titulo-<%= grupo.ancora %>"><%= grupo.nome %></h2>
+                        <% if (grupo.descricao) { %><p><%= grupo.descricao %></p><% } %>
+                    </div>
+
+                    <ul class="hub-grade">
+                        <% grupo.aplicacoes.forEach((app) => { %>
+                        <% const status = statusDe(app); %>
+                        <li data-app data-texto="<%= `${app.nome} ${app.descricao || ''} ${enderecoCurto(app.url)} ${grupo.nome}` %>">
+                            <article class="app-card">
+                                <span class="app-icone" aria-hidden="true"><%= simbolo(app) %></span>
+                                <div class="app-corpo">
+                                    <h3 class="app-nome">
+                                        <a href="<%= app.url %>" class="app-link" target="_blank" rel="noopener noreferrer"><%= app.nome %><span class="sr-only"> (abre em nova aba)</span></a>
+                                    </h3>
+                                    <p class="app-endereco"><%= enderecoCurto(app.url) %></p>
+                                    <% if (app.descricao) { %><p class="app-descricao"><%= app.descricao %></p><% } %>
+                                    <p class="app-rodape">
+                                        <span class="status <%= status.classe %>" data-status-id="<%= app.id %>" data-status="<%= status.chave %>"><%= status.rotulo %></span>
+                                        <span class="app-abrir" aria-hidden="true">Abrir <%- icone('externo') %></span>
+                                    </p>
+                                </div>
+                            </article>
+                        </li>
+                        <% }) %>
+                    </ul>
+                </section>
+                <% }) %>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

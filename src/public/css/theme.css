@@ -1,0 +1,25 @@
+/* Esquema de cores do navegador (barras de rolagem, campos nativos). */
+:root { color-scheme: light; }
+html.alto-contraste { color-scheme: dark; }
+
+/* Somente tema claro e alto contraste. Cores de texto e de fundo têm
+   papéis separados: amarelo identifica ações, preto mantém a superfície. */
+html.alto-contraste .utility-bar { border-bottom: 1px solid var(--borda-suave); }
+html.alto-contraste .utility-links a,
+html.alto-contraste .utility-admin,
+html.alto-contraste .contrast-toggle,
+html.alto-contraste .contrast-toggle:hover { color: #ffd700; background: transparent; opacity: 1; }
+html.alto-contraste .contrast-toggle[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 4px; }
+
+html.alto-contraste .status-waiting,
+html.alto-contraste .status-archived { background: #111; color: #fff; border-color: #aaa; }
+html.alto-contraste .hub-atalho { color: #fff; }
+html.alto-contraste .hub-atalho b { color: #ffd700; }
+html.alto-contraste input::placeholder,
+html.alto-contraste textarea::placeholder { color: #ccc; opacity: 1; }
+html.alto-contraste input[type="checkbox"],
+html.alto-contraste input[type="radio"] { accent-color: #ffd700; }
+html.alto-contraste button:disabled,
+html.alto-contraste .btn[aria-disabled="true"] { opacity: 1; border-style: dashed; }
+html.alto-contraste :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+html.alto-contraste .app-card:focus-within { outline: 2px solid #fff; outline-offset: 3px; }

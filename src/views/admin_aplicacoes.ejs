@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <%- include('partials/head', { titulo: 'Aplicações' }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="container">
+        <%- include('partials/breadcrumb', { itens: [{ texto: 'Início', href: '/' }, { texto: 'Aplicações' }] }) %>
+        <%- include('partials/flash') %>
+
+        <div class="page-head">
+            <div>
+                <h1>Aplicações</h1>
+                <p>O que aparece na página inicial do hub, por categoria.</p>
+            </div>
+            <div class="page-head-actions">
+                <form method="post" action="/admin/status/verificar">
+                    <button type="submit" class="btn-secondary"><%- icone('pulso') %> Verificar status agora</button>
+                </form>
+                <% if (dokployConfigurado) { %>
+                <form method="post" action="/admin/dokploy/sincronizar">
+                    <button type="submit" class="btn-secondary"><%- icone('sincronizar') %> Sincronizar com o Dokploy</button>
+                </form>
+                <% } %>
+                <a href="/admin/aplicacoes/nova" class="btn"><%- icone('mais') %> Nova aplicação</a>
+            </div>
+        </div>
+
+        <% if (!dokployConfigurado) { %>
+        <div class="aviso aviso-info">
+            <%- icone('info') %>
+            <div>
+                <strong>Listagem automática desligada</strong>
+                Para o hub encontrar sozinho as aplicações publicadas no Dokploy, defina <code>DOKPLOY_URL</code> e <code>DOKPLOY_API_KEY</code> no ambiente (veja o README). Enquanto isso, cadastre as aplicações por aqui.
+            </div>
+        </div>
+        <% } %>
+
+        <% if (pendentes.length) { %>
+        <section class="card approval-section" aria-labelledby="titulo-pendentes">
+            <div class="section-heading">
+                <div>
+                    <h2 id="titulo-pendentes">Encontradas no Dokploy <span class="tab-contador"><%= pendentes.length %></span></h2>
+                    <p class="text-muted">Ainda não aparecem na página inicial. Escolha a categoria e publique, ou oculte o que não é para os professores.</p>
+                </div>
+            </div>
+            <div class="approval-list">
+                <% pendentes.forEach((app) => { %>
+                <div class="approval-item">
+                    <div class="approval-person">
+                        <span class="app-simbolo" aria-hidden="true"><%= simbolo(app) %></span>
+                        <div>
+                            <strong><%= app.nome %></strong>
+                            <span><%= enderecoCurto(app.url) %></span>
+                            <% if (app.dokploy_projeto) { %><small>Projeto no Dokploy: <%= app.dokploy_projeto %></small><% } %>
+                        </div>
+                    </div>
+                    <div class="approval-acoes">
+                        <form method="post" action="/admin/aplicacoes/<%= app.id %>/situacao">
+                            <input type="hidden" name="situacao" value="publicada">
+                            <label for="categoria-<%= app.id %>" class="sr-only">Categoria de <%= app.nome %></label>
+                            <select name="categoria_id" id="categoria-<%= app.id %>">
+                                <option value="">Sem categoria</option>
+                                <% categorias.forEach((categoria) => { %>
+                                    <option value="<%= categoria.id %>"><%= categoria.nome %></option>
+                                <% }) %>
+                            </select>
+                            <button type="submit" class="btn-success btn-sm"><%- icone('check') %> Publicar</button>
+                        </form>
+                        <a href="/admin/aplicacoes/<%= app.id %>/editar" class="user-action" title="Revisar nome e descrição" aria-label="Revisar <%= app.nome %>"><%- icone('caneta') %></a>
+                        <form method="post" action="/admin/aplicacoes/<%= app.id %>/situacao">
+                            <input type="hidden" name="situacao" value="oculta">
+                            <button type="submit" class="user-action" title="Ocultar" aria-label="Ocultar <%= app.nome %>"><%- icone('olho-fechado') %></button>
+                        </form>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </section>
+        <% } %>
+
+        <section class="card" aria-labelledby="titulo-lista">
+            <h2 id="titulo-lista" class="sr-only">Aplicações cadastradas</h2>
+            <% if (!lista.length) { %>
+                <p class="empty-state">Nenhuma aplicação cadastrada ainda. Comece por <a href="/admin/aplicacoes/nova">Nova aplicação</a>.</p>
+            <% } else { %>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Aplicação</th>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Situação</th>
+                            <th scope="col" class="col-acoes"><span class="sr-only">Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% lista.forEach((app) => { %>
+                        <% const status = statusDe(app); %>
+                        <% const doDokploy = app.origem === 'dokploy'; %>
+                        <tr>
+                            <td class="celula-principal">
+                                <div class="app-celula">
+                                    <span class="app-simbolo" aria-hidden="true"><%= simbolo(app) %></span>
+                                    <div>
+                                        <strong><%= app.nome %></strong>
+                                        <a href="<%= app.url %>" target="_blank" rel="noopener noreferrer"><%= enderecoCurto(app.url) %></a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><%= app.categoria_nome || 'Sem categoria' %></td>
+                            <td>
+                                <% if (app.situacao === 'oculta') { %>
+                                    <span class="text-muted">Não verificada</span>
+                                <% } else { %>
+                                    <span class="status <%= status.classe %>" title="<%= app.status_verificado_em ? `Verificado em ${dataHoraBr(app.status_verificado_em)}${app.status_http ? ` · HTTP ${app.status_http}` : ''}` : 'Ainda não verificado' %>"><%= status.rotulo %></span>
+                                <% } %>
+                            </td>
+                            <td class="user-status-cell">
+                                <% if (app.situacao === 'publicada') { %>
+                                    <span class="status status-progress">Publicada</span>
+                                <% } else { %>
+                                    <span class="status status-archived">Oculta</span>
+                                <% } %>
+                                <% if (doDokploy && app.dokploy_ausente) { %>
+                                    <span class="status status-banca" title="Não foi encontrada na última sincronização">Fora do Dokploy</span>
+                                <% } else if (doDokploy) { %>
+                                    <span class="status status-waiting" title="<%= app.dokploy_projeto ? `Projeto: ${app.dokploy_projeto}` : 'Encontrada pela sincronização' %>">Dokploy</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="user-actions">
+                                    <a href="/admin/aplicacoes/<%= app.id %>/editar" class="user-action" title="Editar" aria-label="Editar <%= app.nome %>"><%- icone('caneta') %></a>
+                                    <form method="post" action="/admin/aplicacoes/<%= app.id %>/situacao">
+                                        <% if (app.situacao === 'publicada') { %>
+                                            <input type="hidden" name="situacao" value="oculta">
+                                            <button type="submit" class="user-action" title="Ocultar da página inicial" aria-label="Ocultar <%= app.nome %>"><%- icone('olho-fechado') %></button>
+                                        <% } else { %>
+                                            <input type="hidden" name="situacao" value="publicada">
+                                            <button type="submit" class="user-action user-action-positive" title="Publicar na página inicial" aria-label="Publicar <%= app.nome %>"><%- icone('olho') %></button>
+                                        <% } %>
+                                    </form>
+                                    <% if (!doDokploy || app.dokploy_ausente || !dokployConfigurado) { %>
+                                    <form method="post" action="/admin/aplicacoes/<%= app.id %>/excluir">
+                                        <button type="submit" class="user-action user-action-danger" title="Excluir" aria-label="Excluir <%= app.nome %>" data-confirmar="Excluir a aplicação &quot;<%= app.nome %>&quot;?"><%- icone('lixeira') %></button>
+                                    </form>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

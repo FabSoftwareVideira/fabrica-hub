@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <%- include('partials/head', { titulo: 'Usuários' }) %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main id="conteudo" class="container">
+        <%- include('partials/breadcrumb', { itens: [{ texto: 'Início', href: '/' }, { texto: 'Usuários' }] }) %>
+        <%- include('partials/flash') %>
+
+        <div class="page-head">
+            <div>
+                <h1>Usuários</h1>
+                <p>Quem pode entrar na área administrativa e cadastrar aplicações, categorias e outros usuários.</p>
+            </div>
+        </div>
+
+        <section class="card" aria-labelledby="titulo-form">
+            <h2 id="titulo-form">Autorizar uma conta</h2>
+            <form method="post" action="/admin/usuarios" class="form-linha form-linha-2">
+                <div class="form-field">
+                    <label for="email">E-mail institucional</label>
+                    <input type="email" id="email" name="email" maxlength="255" required placeholder="nome.sobrenome<%= dominio %>" autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="nome">Nome <span class="text-muted">(opcional)</span></label>
+                    <input type="text" id="nome" name="nome" maxlength="150" autocomplete="off">
+                </div>
+                <div class="form-actions">
+                    <button type="submit"><%- icone('mais') %> Autorizar</button>
+                </div>
+            </form>
+            <p class="text-muted">Só contas <strong><%= dominio %></strong>. A pessoa entra com o Google usando esse e-mail; não há senha no hub.</p>
+        </section>
+
+        <section class="card" aria-labelledby="titulo-lista">
+            <h2 id="titulo-lista" class="sr-only">Contas autorizadas</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Usuário</th>
+                            <th scope="col">Situação</th>
+                            <th scope="col">Último acesso</th>
+                            <th scope="col" class="col-acoes"><span class="sr-only">Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% lista.forEach((pessoa) => { %>
+                        <% const principal = pessoa.email.toLowerCase() === principalEmail; %>
+                        <% const propria = pessoa.id === user.id; %>
+                        <tr>
+                            <td class="celula-principal">
+                                <div class="user-cell">
+                                    <strong><%= pessoa.nome %><%= propria ? ' (você)' : '' %></strong>
+                                    <span><%= pessoa.email %></span>
+                                </div>
+                            </td>
+                            <td class="user-status-cell">
+                                <% if (pessoa.ativo) { %>
+                                    <span class="status status-completed">Com acesso</span>
+                                <% } else { %>
+                                    <span class="status status-archived">Desativada</span>
+                                <% } %>
+                                <% if (principal) { %><span class="status status-progress">Conta principal</span><% } %>
+                            </td>
+                            <td><%= pessoa.ultimo_acesso_em ? dataHoraBr(pessoa.ultimo_acesso_em) : 'Ainda não entrou' %></td>
+                            <td>
+                                <% if (!principal && !propria) { %>
+                                <div class="user-actions">
+                                    <form method="post" action="/admin/usuarios/<%= pessoa.id %>/ativo">
+                                        <% if (pessoa.ativo) { %>
+                                            <input type="hidden" name="ativo" value="0">
+                                            <button type="submit" class="user-action" title="Desativar acesso" aria-label="Desativar o acesso de <%= pessoa.email %>"><%- icone('cadeado') %></button>
+                                        <% } else { %>
+                                            <input type="hidden" name="ativo" value="1">
+                                            <button type="submit" class="user-action user-action-positive" title="Reativar acesso" aria-label="Reativar o acesso de <%= pessoa.email %>"><%- icone('check') %></button>
+                                        <% } %>
+                                    </form>
+                                    <form method="post" action="/admin/usuarios/<%= pessoa.id %>/excluir">
+                                        <button type="submit" class="user-action user-action-danger" title="Remover da lista" aria-label="Remover <%= pessoa.email %>" data-confirmar="Remover <%= pessoa.email %> da lista de usuários autorizados?"><%- icone('lixeira') %></button>
+                                    </form>
+                                </div>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+
+</html>

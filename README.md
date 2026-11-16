@@ -99,8 +99,8 @@ DOKPLOY_SINCRONIZAR_MINUTOS=30
 │   ├── views/                  # Telas EJS
 │   └── public/                 # CSS (padrão gov.br), JS e imagens
 ├── tests/                      # node --test, com PostgreSQL em memória (PGlite)
-├── docker-compose.yml          # Desenvolvimento
-├── docker-compose.dokploy.yml  # Produção
+├── docker-compose.dev.yml      # Desenvolvimento
+├── docker-compose.yml          # Produção
 └── .github/workflows/          # testes.yml e deploy-dokploy.yml
 ```
 
@@ -116,7 +116,7 @@ DOKPLOY_SINCRONIZAR_MINUTOS=30
 
 ## Deploy no Dokploy
 
-A produção roda na VPS com [Dokploy](https://dokploy.com), a partir do `docker-compose.dokploy.yml`. O workflow `deploy-dokploy.yml` roda os testes, valida o compose e pede o deploy pela API do Dokploy a cada push na `main` ou tag `v*`.
+A produção roda na VPS com [Dokploy](https://dokploy.com), a partir do `docker-compose.yml`. O workflow `deploy-dokploy.yml` roda os testes, valida o compose e pede o deploy pela API do Dokploy a cada push na `main` ou tag `v*`.
 
 O compose de produção tem:
 
@@ -127,7 +127,7 @@ O compose de produção tem:
 
 Configuração (uma vez):
 
-1. No Dokploy, crie um recurso **Docker Compose** apontando para este repositório, com **Compose Path** `./docker-compose.dokploy.yml`. Deixe o *Autodeploy* desligado: quem dispara o deploy é o GitHub Actions.
+1. No Dokploy, crie um recurso **Docker Compose** apontando para este repositório, com **Compose Path** `./docker-compose.yml`. Deixe o *Autodeploy* desligado: quem dispara o deploy é o GitHub Actions.
 2. Na aba **Environment**, cole as variáveis do `.env.sample` com os valores de produção: `APP_ENV=production`, um `SESSION_SECRET` próprio (por exemplo, a saída de `openssl rand -hex 32`), `POSTGRES_PASSWORD` forte, `APP_URL` e `GOOGLE_CALLBACK_URL` com o domínio HTTPS, as credenciais do Google e, se for usar, `DOKPLOY_URL` e `DOKPLOY_API_KEY`. `POSTGRES_HOST` pode ficar como está: o compose usa sempre o serviço `fabrica-hub-db`.
 3. Na aba **Domains**, adicione o domínio para o serviço `fabrica-hub-web`, porta `3000`, com HTTPS.
 4. No Google Cloud, cadastre `https://SEU-DOMINIO/auth/google/callback` como URI de redirecionamento.

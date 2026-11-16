@@ -479,7 +479,7 @@ html.alto-contraste .login-box h1 { color: #ffd700; }
 .public-container { width: var(--largura-conteudo); max-width: var(--max-conteudo); margin: 0 auto; padding: 24px 0 56px; }
 
 /* Topo enxuto: título, situação em uma linha e a busca. O espaço é das aplicações. */
-.hub-topo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 16px; }
+.hub-topo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 20px; padding: 14px 18px; background: var(--azul-100); border-radius: var(--raio-cartao); }
 .hub-topo h1 { font-size: 26px; line-height: 1.2; font-weight: 700; color: var(--azul-900); }
 .hub-situacao { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px; margin-top: 4px; font-size: 14px; color: var(--texto-suave); }
 .hub-situacao strong { color: var(--texto); font-variant-numeric: tabular-nums; }
@@ -542,6 +542,7 @@ html.alto-contraste .login-box h1 { color: #ffd700; }
 .app-abrir { flex: none; display: inline-flex; align-items: center; gap: 6px; color: var(--azul-700); font-size: 14px; font-weight: 700; }
 .app-abrir svg { width: 15px; height: 15px; }
 html.alto-contraste .hub-topo h1, html.alto-contraste .hub-grupo-cabecalho h2, html.alto-contraste .app-nome { color: #ffd700; }
+html.alto-contraste .hub-topo { border: 1px solid var(--borda); }
 html.alto-contraste .app-card { border-color: var(--borda); }
 
 .hub-vazio {
